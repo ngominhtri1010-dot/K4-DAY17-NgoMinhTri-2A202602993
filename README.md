@@ -185,4 +185,4 @@ Track này được thiết kế để các bạn không chỉ “dùng agent”
 
 ## Phân tích và trạng thái bài làm
 
-Xem [Analysis.md](Analysis.md) cho phần phân tích bước 8, giới hạn của phép đo và các việc còn cần hoàn thành trước khi nộp. Đã có kết quả benchmark offline trong `benchmark-results.txt`; kết quả pytest trong `test-results.txt` hiện là 17 pass, 1 fail; xem lỗi còn lại trong `Analysis.md`. Các TODO được giữ để đối chiếu với scaffold ban đầu.
+Xem [Analysis.md](Analysis.md) cho phần phân tích bước 8, giới hạn của phép đo và các việc còn cần hoàn thành trước khi nộp. Đã có kết quả benchmark offline trong `benchmark-results.txt`; kết quả pytest trong `test-results.txt` là 24 test pass. Số liệu và giới hạn kiểm chứng được cập nhật trong `Analysis.md`. Các TODO được giữ để đối chiếu với scaffold ban đầu.

@@ -2,35 +2,35 @@
 
 ## Trạng thái kết quả
 
-Số liệu dưới đây lấy từ `benchmark-results.txt` và `test-results.txt` do người làm bài chạy lại. Trợ lý chỉ đọc kết quả, không chạy lại test hoặc benchmark. Pytest thu thập 18 test: **17 passed, 1 failed** trong 0,69 giây. Bài chưa đạt trạng thái toàn bộ test pass.
+Đã chạy lại test và benchmark trên mã hiện tại ngày 03/10/2026. Pytest: **24 passed trong 0,72 giây**, không có test fail. Kết quả được lưu trong `test-results.txt` và `benchmark-results.txt`. Kiểm chứng này chạy offline; chưa gọi API để kiểm chứng chế độ live.
 
 ## Standard Benchmark
 
 | Agent | Agent tokens only | Prompt tokens processed | Cross-session recall | Response quality | Memory growth (bytes) | Compactions |
 | --- | --- | --- | --- | --- | --- | --- |
-| Baseline | 3460 | 14787 | 0.0% | 0.0% | 0 | 0 |
-| Advanced | 3812 | 33587 | 89.3% | 91.8% | 366 | 0 |
+| Baseline | 3470 | 14787 | 0.0% | 0.0% | 0 | 0 |
+| Advanced | 3812 | 33454 | 92.9% | 95.0% | 359 | 0 |
 
 ## Long-Context Stress Benchmark
 
 | Agent | Agent tokens only | Prompt tokens processed | Cross-session recall | Response quality | Memory growth (bytes) | Compactions |
 | --- | --- | --- | --- | --- | --- | --- |
-| Baseline | 2775 | 22587 | 0.0% | 0.0% | 0 | 0 |
-| Advanced | 2820 | 18754 | 50.0% | 58.3% | 340 | 1 |
+| Baseline | 2790 | 22587 | 0.0% | 0.0% | 0 | 0 |
+| Advanced | 2852 | 18797 | 100.0% | 100.0% | 353 | 1 |
 
 ## Nhận xét từ kết quả thực tế
 
-Trong Standard Benchmark, Advanced đạt recall **89,3%** và quality heuristic **91,8%**, so với Baseline đều 0%. Prompt tokens tăng từ 14.787 lên 33.587, tương đương **127,1%**; không có compaction. Agent tokens tăng từ 3.460 lên 3.812 (khoảng 10,2%). Đây là chi phí mang thêm hồ sơ và hướng dẫn khi lịch sử từng thread còn ngắn. Memory growth của Advanced là **366 bytes**.
+Trong Standard Benchmark, Advanced đạt recall **92,9%**, quality heuristic **95,0%**; Baseline đạt 0% cho cả hai chỉ số. Prompt tokens tăng từ 14.787 lên 33.454 (**126,2%**), trong khi không có compaction. Agent tokens tăng từ 3.470 lên 3.812 (khoảng **9,9%**). Memory growth là **359 bytes**. Advanced nhớ qua phiên tốt hơn nhưng mang thêm chi phí hồ sơ và hướng dẫn ở các thread ngắn.
 
-Trong Long-Context Stress Benchmark, Advanced compact **1 lần** và giảm prompt tokens từ 22.587 xuống 18.754: tiết kiệm **3.833 token**, khoảng **17,0%**. Agent tokens vẫn tăng nhẹ từ 2.775 lên 2.820 (khoảng 1,6%). Recall đạt **50,0%**, quality heuristic **58,3%**, memory growth **340 bytes**. Compact đã giảm tải prompt trong lần đo này, nhưng recall chưa đầy đủ; không thể kết luận chất lượng ngữ nghĩa cao chỉ từ việc giảm token.
+Trong Long-Context Stress Benchmark, Advanced đạt recall **100,0%** và quality heuristic **100,0%** cho các câu hỏi của bộ dữ liệu. Advanced compact **1 lần**, giảm prompt tokens từ 22.587 xuống 18.797: giảm **3.790 token**, khoảng **16,8%**. Agent tokens tăng từ 2.790 lên 2.852 (khoảng **2,2%**), memory growth là **353 bytes**. Lợi ích compact nằm ở giảm lịch sử phải xử lý lại, không phải giảm token của lượt mới.
 
-So với lần đo trước, recall standard tăng từ 50,0% lên 89,3% và mức giảm prompt stress tăng từ khoảng 10,7% lên 17,0%. Đây là quan sát giữa hai phiên bản, không chứng minh riêng từng thay đổi là nguyên nhân của toàn bộ mức cải thiện.
+Recall standard chưa đạt 100%; cần giữ giới hạn này trong kết luận. Quality là tỷ lệ chuỗi kỳ vọng xuất hiện, nên 100% ở stress không chứng minh chất lượng ngữ nghĩa hoàn hảo hoặc khả năng tổng quát ngoài dataset.
 
-## Kết quả test và lỗi còn lại
+## Kiểm chứng lỗi đã sửa
 
-Test thất bại là `test_profile_recall_matches_dataset_fields`. Đáp án có `Nghề nghiệp: hiện tại` thay vì `MLOps engineer`. Qua đối chiếu mã, regex nghề nghiệp có nhánh `nghề` quá rộng, khớp cụm `nghề hiện tại` trong yêu cầu recall; `_prepare_turn()` lưu giá trị này trước khi trả lời, làm ghi đè nghề đã biết. Cần sửa extraction để yêu cầu recall không được xem là khai báo nghề nghiệp, rồi chạy lại test và benchmark. Đây là sửa lỗi chức năng cơ bản, không phải bonus bước 9.
+Lỗi cũ trích `nghề hiện tại` trong câu hỏi thành fact đã được sửa bằng cách giới hạn mẫu khai báo nghề và bỏ qua yêu cầu nhắc lại/tóm tắt. Test hồi quy kiểm tra recall không thay đổi hồ sơ và vẫn nhận khai báo nghề thật đã pass. Khi chạy bộ test mới, pytest phát hiện tên tham số `request` dành riêng; tham số đã được đổi thành `recall_message` và toàn bộ bộ test đã chạy lại thành công.
 
-17 test còn lại pass, bao gồm bốn hành vi cốt lõi: thao tác User.md, compact trigger, cross-session recall và giảm prompt load. Tuy nhiên, chúng không thay thế test đang fail hoặc kiểm chứng toàn bộ câu recall trong dataset. Benchmark tổng hợp chưa liệt kê từng câu sai, nên chưa xác định đầy đủ nguyên nhân recall stress chỉ đạt 50%.
+24 test pass bao gồm thao tác User.md, compact trigger, recall qua instance mới, giảm prompt load, cách ly người dùng, cập nhật fact, chuẩn hoá provider và các trường hợp hồi quy extraction. Các test không gọi API live và không bảo đảm mọi cách diễn đạt ngoài dữ liệu đều được xử lý đúng.
 
 ## Vì sao Advanced có khả năng recall tốt hơn Baseline
 
@@ -67,7 +67,7 @@ python src/benchmark.py > benchmark-results.txt
 
 Benchmark chạy offline, không gọi model hay judge API. Mỗi bộ dữ liệu có agent mới và thư mục state tạm riêng; thư mục tạm được xoá sau khi đo. `Response quality` chỉ là tỷ lệ chuỗi kỳ vọng xuất hiện trong đáp án, không phải đánh giá ngữ nghĩa của model judge. Recall cho mỗi câu hỏi là 0 nếu không khớp, 0.5 nếu khớp một phần, và 1 nếu khớp toàn bộ.
 
-Đã có hai bảng benchmark và log pytest. Sau khi sửa lỗi extraction, chạy lại các lệnh trên và thay số liệu trong báo cáo bằng kết quả mới. Không coi số liệu hiện tại là kết quả của bản sửa trong tương lai.
+Hai bảng và log pytest đã được cập nhật sau khi sửa lỗi. Nếu thay đổi mã hoặc cấu hình, chạy lại các lệnh trên để đồng bộ số liệu báo cáo.
 
 ## Rà soát bài nộp (bước 1–8, không gồm bước 9)
 
@@ -75,13 +75,13 @@ Benchmark chạy offline, không gọi model hay judge API. Mỗi bộ dữ li�
 |---|---|---|
 | 1. Cấu trúc và môi trường | Có tài liệu và dữ liệu | Đã có benchmark và log pytest |
 | 2. Cấu hình | Có LabConfig, load_config, 6 provider | Chưa kiểm chứng runtime; cấu hình provider không đồng nghĩa model live đã hoạt động |
-| 3. Memory layer | Có estimator, User.md, extraction, summary, compact | Còn lỗi trích nghề từ yêu cầu recall; cần sửa và kiểm chứng |
+| 3. Memory layer | Có estimator, User.md, extraction, summary, compact | Đã sửa; test hồi quy extraction đã pass |
 | 4. Baseline | Có offline, bộ đếm, nhánh live | Đã triển khai provider; chưa kiểm chứng bằng API thật |
 | 5. Advanced | Có ba lớp memory và công cụ profile cho live | Đã bổ sung câu hỏi thú nuôi/tóm tắt; chưa kiểm chứng live; compact live dùng manager chung |
-| 6. Benchmark | Có hai bộ và đủ 6 chỉ số | Đã có hai bảng mới; chạy lại sau khi sửa lỗi; chất lượng là heuristic |
-| 7. Test | Có test cho 4 hành vi cốt lõi và một số trường hợp bổ sung | 17 pass, 1 fail; cần sửa test hồi quy đang fail |
+| 6. Benchmark | Có hai bộ và đủ 6 chỉ số | Đã chạy và lưu hai bảng mới; chất lượng là heuristic |
+| 7. Test | Có test cho 4 hành vi cốt lõi và một số trường hợp bổ sung | 24 test pass, không còn fail trong bộ test hiện tại |
 | 8. Phân tích | Đã có lập luận và giới hạn trong tài liệu này | Đã cập nhật benchmark và log test; kết luận có ghi rõ giới hạn |
 
-`src/model_provider.py` đã triển khai `normalize_provider()` và `build_chat_model()` cho sáu provider. Import SDK chỉ xảy ra khi khởi tạo live model, nên offline không cần API key. Chưa gọi API thật để kiểm chứng; model và endpoint phải tương thích với tài khoản của người chạy. Test chuẩn hoá provider đã pass; test hồi quy recall còn 1 lỗi như mô tả ở trên. Không triển khai các bonus bước 9.
+`src/model_provider.py` đã triển khai `normalize_provider()` và `build_chat_model()` cho sáu provider. Import SDK chỉ xảy ra khi khởi tạo live model, nên offline không cần API key. Chưa gọi API thật để kiểm chứng; model và endpoint phải tương thích với tài khoản của người chạy. Test chuẩn hoá provider và test hồi quy recall đều pass. Không triển khai các bonus bước 9.
 
 Trước khi nộp, đưa `Analysis.md`, mã nguồn và kết quả benchmark vào bộ bài nộp; không đưa `.env`, `.venv/` hoặc hồ sơ cá nhân trong `state/`. Các TODO được giữ theo yêu cầu, không dùng việc còn comment TODO làm bằng chứng rằng hàm chưa hoàn thiện; kiểm tra phần thân hàm và kết quả chạy.

@@ -166,11 +166,13 @@ def test_profile_recall_matches_dataset_fields(tmp_path: Path) -> None:
     ):
         agent.reply("demo", "learn", message)
     restored = AdvancedAgent(config, force_offline=True)
+    profile_before = restored.profile_store.read_text("demo")
     answer = restored.reply("demo", "recall", "Tóm tắt tên, nghề hiện tại, mối quan tâm, thú nuôi và style trả lời.")["response"]
     for fact in ("DũngCT", "Huế", "MLOps engineer", "Python", "AI", "corgi", "ngắn gọn"):
         if fact != "Huế":
             assert fact in answer
     assert "backend engineer" not in answer
+    assert restored.profile_store.read_text("demo") == profile_before
     assert restored.profile_store.facts("demo")["location"] == "Huế"
 
 
@@ -189,3 +191,25 @@ def test_unknown_provider_is_rejected() -> None:
 
     with pytest.raises(ValueError, match="Unsupported provider"):
         normalize_provider("unknown")
+
+
+@pytest.mark.parametrize("recall_message", [
+    "Tóm tắt tên, nghề hiện tại, mối quan tâm, thú nuôi và style trả lời.",
+    "Nhắc lại tên, nơi ở hiện tại, nghề nghiệp hiện tại của mình.",
+    "Nghề hiện tại của mình là gì?",
+])
+def test_recall_request_does_not_extract_profile_updates(recall_message: str) -> None:
+    from memory_store import extract_profile_updates
+
+    assert extract_profile_updates(recall_message) == {}
+
+
+@pytest.mark.parametrize("statement", [
+    "Nghề hiện tại là MLOps engineer.",
+    "Tên DũngCT Stress, nghề MLOps engineer, nơi ở hiện tại là Đà Nẵng.",
+    "Mình không còn làm backend engineer nữa, giờ chuyển sang MLOps engineer.",
+])
+def test_profession_declarations_are_still_extracted(statement: str) -> None:
+    from memory_store import extract_profile_updates
+
+    assert extract_profile_updates(statement)["profession"] == "MLOps engineer"

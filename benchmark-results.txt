@@ -6,13 +6,13 @@ Each suite starts with fresh agents and an isolated temporary memory directory.
 
 | Agent | Agent tokens only | Prompt tokens processed | Cross-session recall | Response quality | Memory growth (bytes) | Compactions |
 | --- | --- | --- | --- | --- | --- | --- |
-| Baseline | 3460 | 14787 | 0.0% | 0.0% | 0 | 0 |
-| Advanced | 3812 | 33587 | 89.3% | 91.8% | 366 | 0 |
+| Baseline | 3470 | 14787 | 0.0% | 0.0% | 0 | 0 |
+| Advanced | 3812 | 33454 | 92.9% | 95.0% | 359 | 0 |
 
 ## Long-Context Stress Benchmark
 
 | Agent | Agent tokens only | Prompt tokens processed | Cross-session recall | Response quality | Memory growth (bytes) | Compactions |
 | --- | --- | --- | --- | --- | --- | --- |
-| Baseline | 2775 | 22587 | 0.0% | 0.0% | 0 | 0 |
-| Advanced | 2820 | 18754 | 50.0% | 58.3% | 340 | 1 |
+| Baseline | 2790 | 22587 | 0.0% | 0.0% | 0 | 0 |
+| Advanced | 2852 | 18797 | 100.0% | 100.0% | 353 | 1 |
 

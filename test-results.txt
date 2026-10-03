@@ -3,53 +3,31 @@ platform darwin -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- /Users/AiAction/
 cachedir: .pytest_cache
 rootdir: /Users/AiAction/day17-cohort4-MemorySystems4Agent
 plugins: langsmith-0.14.4, anyio-4.15.1
-collecting ... collected 18 items
+collecting ... collected 24 items
 
-src/test_agents.py::test_user_markdown_read_write_edit PASSED            [  5%]
-src/test_agents.py::test_compact_trigger PASSED                          [ 11%]
-src/test_agents.py::test_cross_session_recall PASSED                     [ 16%]
-src/test_agents.py::test_compact_reduces_prompt_load_on_long_thread PASSED [ 22%]
-src/test_agents.py::test_profile_path_stays_inside_root[../escape] PASSED [ 27%]
-src/test_agents.py::test_profile_path_stays_inside_root[a/b] PASSED      [ 33%]
-src/test_agents.py::test_profile_path_stays_inside_root[a b] PASSED      [ 38%]
-src/test_agents.py::test_profile_path_stays_inside_root[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] PASSED [ 44%]
-src/test_agents.py::test_upsert_replaces_old_fact PASSED                 [ 50%]
-src/test_agents.py::test_thread_cannot_be_shared_between_users[BaselineAgent] PASSED [ 55%]
-src/test_agents.py::test_thread_cannot_be_shared_between_users[AdvancedAgent] PASSED [ 61%]
-src/test_agents.py::test_profile_recall_matches_dataset_fields FAILED    [ 66%]
-src/test_agents.py::test_normalize_provider[ OPENAI -openai] PASSED      [ 72%]
-src/test_agents.py::test_normalize_provider[anthorpic-anthropic] PASSED  [ 77%]
-src/test_agents.py::test_normalize_provider[google-gemini] PASSED        [ 83%]
-src/test_agents.py::test_normalize_provider[ollama-ollama] PASSED        [ 88%]
-src/test_agents.py::test_normalize_provider[open-router-openrouter] PASSED [ 94%]
-src/test_agents.py::test_unknown_provider_is_rejected PASSED             [100%]
+src/test_agents.py::test_user_markdown_read_write_edit PASSED            [  4%]
+src/test_agents.py::test_compact_trigger PASSED                          [  8%]
+src/test_agents.py::test_cross_session_recall PASSED                     [ 12%]
+src/test_agents.py::test_compact_reduces_prompt_load_on_long_thread PASSED [ 16%]
+src/test_agents.py::test_profile_path_stays_inside_root[../escape] PASSED [ 20%]
+src/test_agents.py::test_profile_path_stays_inside_root[a/b] PASSED      [ 25%]
+src/test_agents.py::test_profile_path_stays_inside_root[a b] PASSED      [ 29%]
+src/test_agents.py::test_profile_path_stays_inside_root[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] PASSED [ 33%]
+src/test_agents.py::test_upsert_replaces_old_fact PASSED                 [ 37%]
+src/test_agents.py::test_thread_cannot_be_shared_between_users[BaselineAgent] PASSED [ 41%]
+src/test_agents.py::test_thread_cannot_be_shared_between_users[AdvancedAgent] PASSED [ 45%]
+src/test_agents.py::test_profile_recall_matches_dataset_fields PASSED    [ 50%]
+src/test_agents.py::test_normalize_provider[ OPENAI -openai] PASSED      [ 54%]
+src/test_agents.py::test_normalize_provider[anthorpic-anthropic] PASSED  [ 58%]
+src/test_agents.py::test_normalize_provider[google-gemini] PASSED        [ 62%]
+src/test_agents.py::test_normalize_provider[ollama-ollama] PASSED        [ 66%]
+src/test_agents.py::test_normalize_provider[open-router-openrouter] PASSED [ 70%]
+src/test_agents.py::test_unknown_provider_is_rejected PASSED             [ 75%]
+src/test_agents.py::test_recall_request_does_not_extract_profile_updates[T\xf3m t\u1eaft t\xean, ngh\u1ec1 hi\u1ec7n t\u1ea1i, m\u1ed1i quan t\xe2m, th\xfa nu\xf4i v\xe0 style tr\u1ea3 l\u1eddi.] PASSED [ 79%]
+src/test_agents.py::test_recall_request_does_not_extract_profile_updates[Nh\u1eafc l\u1ea1i t\xean, n\u01a1i \u1edf hi\u1ec7n t\u1ea1i, ngh\u1ec1 nghi\u1ec7p hi\u1ec7n t\u1ea1i c\u1ee7a m\xecnh.] PASSED [ 83%]
+src/test_agents.py::test_recall_request_does_not_extract_profile_updates[Ngh\u1ec1 hi\u1ec7n t\u1ea1i c\u1ee7a m\xecnh l\xe0 g\xec?] PASSED [ 87%]
+src/test_agents.py::test_profession_declarations_are_still_extracted[Ngh\u1ec1 hi\u1ec7n t\u1ea1i l\xe0 MLOps engineer.] PASSED [ 91%]
+src/test_agents.py::test_profession_declarations_are_still_extracted[T\xean D\u0169ngCT Stress, ngh\u1ec1 MLOps engineer, n\u01a1i \u1edf hi\u1ec7n t\u1ea1i l\xe0 \u0110\xe0 N\u1eb5ng.] PASSED [ 95%]
+src/test_agents.py::test_profession_declarations_are_still_extracted[M\xecnh kh\xf4ng c\xf2n l\xe0m backend engineer n\u1eefa, gi\u1edd chuy\u1ec3n sang MLOps engineer.] PASSED [100%]
 
-=================================== FAILURES ===================================
-__________________ test_profile_recall_matches_dataset_fields __________________
-
-tmp_path = PosixPath('/private/var/folders/w1/qrx0spw12j5_sbd3nt_8w96w0000gp/T/pytest-of-longtran/pytest-21/test_profile_recall_matches_da0')
-
-    def test_profile_recall_matches_dataset_fields(tmp_path: Path) -> None:
-        config = make_config(tmp_path)
-        agent = AdvancedAgent(config, force_offline=True)
-        for message in (
-            "Mình tên là DũngCT.",
-            "Mình ở Huế và đang làm backend engineer cho startup AI.",
-            "Mình không còn làm backend engineer nữa, giờ chuyển sang MLOps engineer.",
-            "Mình nuôi một bé corgi tên Bơ.",
-            "Mình đang quan tâm nhiều đến Python, AI agent và benchmark memory.",
-            "Mình thích markdown vì dễ mở.",
-            "Mình muốn bạn trả lời ngắn gọn và có ví dụ thực chiến.",
-        ):
-            agent.reply("demo", "learn", message)
-        restored = AdvancedAgent(config, force_offline=True)
-        answer = restored.reply("demo", "recall", "Tóm tắt tên, nghề hiện tại, mối quan tâm, thú nuôi và style trả lời.")["response"]
-        for fact in ("DũngCT", "Huế", "MLOps engineer", "Python", "AI", "corgi", "ngắn gọn"):
-            if fact != "Huế":
->               assert fact in answer
-E               AssertionError: assert 'MLOps engineer' in 'Tên: DũngCT; Nghề nghiệp: hiện tại; Phong cách trả lời: ngắn gọn và có ví dụ thực chiến; Thú nuôi: corgi tên Bơ; Sở thích: Python, AI agent và benchmark memory'
-
-src/test_agents.py:172: AssertionError
-=========================== short test summary info ============================
-FAILED src/test_agents.py::test_profile_recall_matches_dataset_fields - Asser...
-========================= 1 failed, 17 passed in 0.69s =========================
+============================== 24 passed in 0.72s ==============================

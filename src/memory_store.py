@@ -116,7 +116,7 @@ def extract_profile_updates(message: str) -> dict[str, str]:
     patterns = {
         "name": r"(?:mình|tôi)\s+tên\s+(?:là\s+)?([^,.;!?\n]+)",
         "location": r"(?:(?:mình|tôi)\s+(?:vẫn\s+)?(?:(?:hiện tại|hiện|giờ|từ tuần này)\s+)?(?:đang\s+)?(?:(?:sống|làm việc)\s+)?ở|hiện\s+ở|nơi ở hiện tại\s+(?:là\s+)?|nơi ở đã cập nhật từ\s+[^,.;!?]+?\s+sang)\s+([^,.;!?\n]+)",
-        "profession": r"(?:(?:mình|tôi)\s+(?:đang\s+)?làm|và\s+đang\s+làm|(?:giờ\s+)?chuyển sang|nghề nghiệp(?:\s+hiện tại)?\s+(?:thì\s+)?(?:vẫn\s+)?là|nghề)\s+([^,.;!?\n]+)",
+        "profession": r"(?:(?:mình|tôi)\s+(?:đang\s+)?làm|và\s+đang\s+làm|(?:giờ\s+)?chuyển sang|nghề nghiệp(?:\s+hiện tại)?\s+(?:thì\s+)?(?:vẫn\s+)?là|nghề(?:\s+hiện tại)?\s+là|nghề(?=\s+[\w-]+\s+engineer\b))\s+([^,.;!?\n]+)",
         "favorite_drink": r"đồ uống yêu thích(?:\s+của (?:mình|tôi))?\s+là\s+([^,.;!?\n]+)",
         "favorite_food": r"món ăn yêu thích(?:\s+của (?:mình|tôi))?\s+là\s+([^,.;!?\n]+)",
         "pet": r"(?:mình|tôi)\s+nuôi\s+(?:(?:một|con|bé)\s+)*([^,.;!?\n]+)",
@@ -124,6 +124,12 @@ def extract_profile_updates(message: str) -> dict[str, str]:
         "response_style": r"(?:(?:mình|tôi)\s+(?:vẫn\s+)?muốn\s+(?:bạn\s+)?(?:câu\s+|style\s+)?trả lời|hãy trả lời|style trả lời(?:\s+cũng)?\s+vẫn giữ nguyên)\s*:?\s*([^.;!?\n]+)",
     }
     for sentence in re.split(r"[.!;?\n]+", message):
+        # Recall requests describe what to retrieve, not new profile facts.
+        if re.match(
+            r"\s*(?:(?:bạn|hãy|bạn hãy)\s+)?(?:nhắc lại|nhớ lại|tóm tắt)\b",
+            sentence, re.I,
+        ):
+            continue
         if re.search(r"\b(?:nếu|giả sử|hay là|đùa)\b", sentence, re.I):
             continue
         for key, pattern in patterns.items():
