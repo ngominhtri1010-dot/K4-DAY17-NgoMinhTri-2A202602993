@@ -99,7 +99,7 @@ class BaselineAgent:
         requested: list[str] = []
         lower = message.casefold()
         recall = "?" in message or any(
-            phrase in lower for phrase in ("nhắc lại", "nhớ lại", "còn nhớ", "tên gì", "ở đâu")
+            phrase in lower for phrase in ("nhắc lại", "nhớ lại", "còn nhớ", "tên gì", "ở đâu", "tóm tắt")
         )
         if recall:
             for key, keywords in {
@@ -109,6 +109,7 @@ class BaselineAgent:
                 "response_style": ("style", "phong cách", "kiểu trả lời", "trả lời"),
                 "favorite_drink": ("đồ uống", "uống", "cà phê"),
                 "favorite_food": ("món ăn", "ăn gì"),
+                "pet": ("nuôi", "thú nuôi", "corgi"),
                 "interests": ("sở thích", "quan tâm", "thích gì"),
             }.items():
                 if any(keyword in lower for keyword in keywords):
@@ -116,7 +117,7 @@ class BaselineAgent:
             labels = {
                 "name": "Tên", "location": "Nơi ở", "profession": "Nghề nghiệp",
                 "response_style": "Phong cách trả lời", "favorite_drink": "Đồ uống yêu thích",
-                "favorite_food": "Món ăn yêu thích", "interests": "Sở thích",
+                "favorite_food": "Món ăn yêu thích", "interests": "Sở thích", "pet": "Thú nuôi",
             }
             answer = "; ".join(
                 f"{labels[key]}: {facts[key]}" if key in facts

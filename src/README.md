@@ -3,7 +3,7 @@
 This `src/` folder is the student version of the lab.
 
 - It keeps the same high-level structure
-- The Python files are intentionally incomplete and contain pseudocode / TODOs
+- Steps 2–7 are implemented; original pseudocode / TODOs are retained for reference. See ../Analysis.md for validation status.
 - The benchmark structure should include: standard benchmark + long-context stress benchmark
 - The runtime should support these providers: `openai`, `custom`, `gemini`, `anthropic`, `ollama`, `openrouter`
 

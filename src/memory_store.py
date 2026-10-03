@@ -115,31 +115,33 @@ def extract_profile_updates(message: str) -> dict[str, str]:
     updates: dict[str, str] = {}
     patterns = {
         "name": r"(?:mình|tôi)\s+tên\s+(?:là\s+)?([^,.;!?\n]+)",
-        "location": r"(?:(?:mình|tôi)\s+(?:(?:hiện tại|hiện|giờ|từ tuần này)\s+)?(?:đang\s+)?(?:sống|làm việc)\s+ở|(?:mình|tôi)\s+(?:(?:hiện tại|hiện|giờ)\s+)?(?:đang\s+)?ở|hiện\s+ở|nơi ở hiện tại\s+(?:là\s+)?|nơi ở đã cập nhật từ\s+[^,.;!?]+?\s+sang)\s+([^,.;!?\n]+)",
-        "profession": r"(?:(?:mình|tôi)\s+(?:đang\s+)?làm|và\s+đang\s+làm|nghề nghiệp(?:\s+hiện tại)?\s+(?:thì\s+)?(?:vẫn\s+)?là|nghề)\s+([^,.;!?\n]+)",
+        "location": r"(?:(?:mình|tôi)\s+(?:vẫn\s+)?(?:(?:hiện tại|hiện|giờ|từ tuần này)\s+)?(?:đang\s+)?(?:(?:sống|làm việc)\s+)?ở|hiện\s+ở|nơi ở hiện tại\s+(?:là\s+)?|nơi ở đã cập nhật từ\s+[^,.;!?]+?\s+sang)\s+([^,.;!?\n]+)",
+        "profession": r"(?:(?:mình|tôi)\s+(?:đang\s+)?làm|và\s+đang\s+làm|(?:giờ\s+)?chuyển sang|nghề nghiệp(?:\s+hiện tại)?\s+(?:thì\s+)?(?:vẫn\s+)?là|nghề)\s+([^,.;!?\n]+)",
         "favorite_drink": r"đồ uống yêu thích(?:\s+của (?:mình|tôi))?\s+là\s+([^,.;!?\n]+)",
         "favorite_food": r"món ăn yêu thích(?:\s+của (?:mình|tôi))?\s+là\s+([^,.;!?\n]+)",
-        "interests": r"(?:mình|tôi)\s+(?:còn\s+)?thích\s+([^.;!?\n]+)",
-        "response_style": r"(?:(?:mình|tôi)\s+muốn\s+(?:bạn\s+)?(?:câu\s+)?trả lời|hãy trả lời|style trả lời(?:\s+cũng)?\s+(?:vẫn giữ nguyên|ngắn gọn))\s*:?\s*([^.;!?\n]+)",
+        "pet": r"(?:mình|tôi)\s+nuôi\s+(?:(?:một|con|bé)\s+)*([^,.;!?\n]+)",
+        "interests": r"(?:mình|tôi)\s+(?:vẫn\s+)?(?:còn\s+)?(?:thích|đang quan tâm nhiều đến)\s+([^.;!?\n]+)",
+        "response_style": r"(?:(?:mình|tôi)\s+(?:vẫn\s+)?muốn\s+(?:bạn\s+)?(?:câu\s+|style\s+)?trả lời|hãy trả lời|style trả lời(?:\s+cũng)?\s+vẫn giữ nguyên)\s*:?\s*([^.;!?\n]+)",
     }
-    for sentence in re.split(r"[.!;\n]+", message):
-        # Only explicit declarations are eligible; questions and hypotheticals
-        # should not overwrite persistent facts.
-        if "?" in sentence or re.search(r"\b(?:nếu|giả sử|hay là|đùa)\b", sentence, re.I):
+    for sentence in re.split(r"[.!;?\n]+", message):
+        if re.search(r"\b(?:nếu|giả sử|hay là|đùa)\b", sentence, re.I):
             continue
         for key, pattern in patterns.items():
             for match in re.finditer(pattern, sentence, re.I):
                 value = match.group(1).strip(" :,-")
-                if re.search(r"\b(?:gì|đâu|không phải|không còn)\b", value, re.I) and key != "location":
+                if key in {"location", "profession"}:
+                    value = re.split(r"\s+(?:và|chứ|dù|trong|vài|để|cho|không đổi)\b", value, maxsplit=1, flags=re.I)[0]
+                if re.search(r"\b(?:gì|đâu|không phải|không còn)\b", value, re.I):
                     continue
-                if key == "location":
-                    if re.search(r"\b(?:không phải|không còn|đâu|gì)\b", value, re.I) and not re.search(r"\bchứ\b", value, re.I):
+                if key == "profession" and value.casefold().startswith(("việc", "từ xa")):
+                    continue
+                if key == "interests" and not re.search(r"\b(?:Python|AI|MLOps|RAG|agent|backend|evaluation|chạy bộ|lo-fi)\b", value, re.I):
+                    continue
+                if key == "response_style":
+                    if not re.search(r"ngắn|gọn|bullet|ví dụ|trade-off", value, re.I):
                         continue
-                    value = re.split(r"\s+(?:và|chứ|dù|trong|vài|để)\b", value, maxsplit=1, flags=re.I)[0]
-                elif key == "profession":
-                    value = re.split(r"\s+(?:cho|và|không đổi)\b", value, maxsplit=1, flags=re.I)[0]
-                    if value.casefold().startswith(("việc", "từ xa")):
-                        continue
+                    if re.search(r"bullet ngắn|trả lời ngắn|^ngắn\b", value, re.I) and "ngắn gọn" not in value.casefold():
+                        value = "ngắn gọn; " + value
                 if value:
                     updates[key] = value.strip(" ,")
     return updates

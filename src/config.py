@@ -4,7 +4,7 @@ import os
 from dataclasses import dataclass
 from pathlib import Path
 
-from model_provider import ProviderConfig
+from model_provider import ProviderConfig, normalize_provider
 
 
 # Defaults can be overridden with LLM_MODEL or JUDGE_MODEL.
@@ -48,7 +48,7 @@ def _positive_int(name: str, default: int) -> int:
 
 def _provider_config(prefix: str, fallback: ProviderConfig | None = None) -> ProviderConfig:
     provider = _env(f"{prefix}_PROVIDER", fallback.provider if fallback else "openai").lower()
-    provider = {"anthorpic": "anthropic", "google": "gemini"}.get(provider, provider)
+    provider = normalize_provider(provider)
     if provider not in _PROVIDER_DEFAULTS:
         raise ValueError(f"Unsupported {prefix}_PROVIDER: {provider}. Choose from {', '.join(_PROVIDER_DEFAULTS)}")
 

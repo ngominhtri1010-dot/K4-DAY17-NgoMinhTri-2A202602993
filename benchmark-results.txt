@@ -1,0 +1,18 @@
+Offline benchmark: heuristic token estimates; counts include conversation and recall turns.
+Recall: 0 / 0.5 / 1 per question. Quality: fraction of expected strings found, not an LLM judge score.
+Each suite starts with fresh agents and an isolated temporary memory directory.
+
+## Standard Benchmark
+
+| Agent | Agent tokens only | Prompt tokens processed | Cross-session recall | Response quality | Memory growth (bytes) | Compactions |
+| --- | --- | --- | --- | --- | --- | --- |
+| Baseline | 3460 | 14787 | 0.0% | 0.0% | 0 | 0 |
+| Advanced | 3812 | 33587 | 89.3% | 91.8% | 366 | 0 |
+
+## Long-Context Stress Benchmark
+
+| Agent | Agent tokens only | Prompt tokens processed | Cross-session recall | Response quality | Memory growth (bytes) | Compactions |
+| --- | --- | --- | --- | --- | --- | --- |
+| Baseline | 2775 | 22587 | 0.0% | 0.0% | 0 | 0 |
+| Advanced | 2820 | 18754 | 50.0% | 58.3% | 340 | 1 |
+

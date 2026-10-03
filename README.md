@@ -182,3 +182,7 @@ Nếu các bạn là giảng viên hoặc reviewer:
 - `Rubric.md`: tiêu chí chấm điểm và bonus
 
 Track này được thiết kế để các bạn không chỉ “dùng agent”, mà còn bắt đầu nghĩ như một người thiết kế **memory system** cho agent production.
+
+## Phân tích và trạng thái bài làm
+
+Xem [Analysis.md](Analysis.md) cho phần phân tích bước 8, giới hạn của phép đo và các việc còn cần hoàn thành trước khi nộp. Đã có kết quả benchmark offline trong `benchmark-results.txt`; kết quả pytest trong `test-results.txt` hiện là 17 pass, 1 fail; xem lỗi còn lại trong `Analysis.md`. Các TODO được giữ để đối chiếu với scaffold ban đầu.

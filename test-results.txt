@@ -1,0 +1,55 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.11.9, pytest-9.1.1, pluggy-1.6.0 -- /Users/AiAction/day17-cohort4-MemorySystems4Agent/.venv/bin/python
+cachedir: .pytest_cache
+rootdir: /Users/AiAction/day17-cohort4-MemorySystems4Agent
+plugins: langsmith-0.14.4, anyio-4.15.1
+collecting ... collected 18 items
+
+src/test_agents.py::test_user_markdown_read_write_edit PASSED            [  5%]
+src/test_agents.py::test_compact_trigger PASSED                          [ 11%]
+src/test_agents.py::test_cross_session_recall PASSED                     [ 16%]
+src/test_agents.py::test_compact_reduces_prompt_load_on_long_thread PASSED [ 22%]
+src/test_agents.py::test_profile_path_stays_inside_root[../escape] PASSED [ 27%]
+src/test_agents.py::test_profile_path_stays_inside_root[a/b] PASSED      [ 33%]
+src/test_agents.py::test_profile_path_stays_inside_root[a b] PASSED      [ 38%]
+src/test_agents.py::test_profile_path_stays_inside_root[aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa] PASSED [ 44%]
+src/test_agents.py::test_upsert_replaces_old_fact PASSED                 [ 50%]
+src/test_agents.py::test_thread_cannot_be_shared_between_users[BaselineAgent] PASSED [ 55%]
+src/test_agents.py::test_thread_cannot_be_shared_between_users[AdvancedAgent] PASSED [ 61%]
+src/test_agents.py::test_profile_recall_matches_dataset_fields FAILED    [ 66%]
+src/test_agents.py::test_normalize_provider[ OPENAI -openai] PASSED      [ 72%]
+src/test_agents.py::test_normalize_provider[anthorpic-anthropic] PASSED  [ 77%]
+src/test_agents.py::test_normalize_provider[google-gemini] PASSED        [ 83%]
+src/test_agents.py::test_normalize_provider[ollama-ollama] PASSED        [ 88%]
+src/test_agents.py::test_normalize_provider[open-router-openrouter] PASSED [ 94%]
+src/test_agents.py::test_unknown_provider_is_rejected PASSED             [100%]
+
+=================================== FAILURES ===================================
+__________________ test_profile_recall_matches_dataset_fields __________________
+
+tmp_path = PosixPath('/private/var/folders/w1/qrx0spw12j5_sbd3nt_8w96w0000gp/T/pytest-of-longtran/pytest-21/test_profile_recall_matches_da0')
+
+    def test_profile_recall_matches_dataset_fields(tmp_path: Path) -> None:
+        config = make_config(tmp_path)
+        agent = AdvancedAgent(config, force_offline=True)
+        for message in (
+            "Mình tên là DũngCT.",
+            "Mình ở Huế và đang làm backend engineer cho startup AI.",
+            "Mình không còn làm backend engineer nữa, giờ chuyển sang MLOps engineer.",
+            "Mình nuôi một bé corgi tên Bơ.",
+            "Mình đang quan tâm nhiều đến Python, AI agent và benchmark memory.",
+            "Mình thích markdown vì dễ mở.",
+            "Mình muốn bạn trả lời ngắn gọn và có ví dụ thực chiến.",
+        ):
+            agent.reply("demo", "learn", message)
+        restored = AdvancedAgent(config, force_offline=True)
+        answer = restored.reply("demo", "recall", "Tóm tắt tên, nghề hiện tại, mối quan tâm, thú nuôi và style trả lời.")["response"]
+        for fact in ("DũngCT", "Huế", "MLOps engineer", "Python", "AI", "corgi", "ngắn gọn"):
+            if fact != "Huế":
+>               assert fact in answer
+E               AssertionError: assert 'MLOps engineer' in 'Tên: DũngCT; Nghề nghiệp: hiện tại; Phong cách trả lời: ngắn gọn và có ví dụ thực chiến; Thú nuôi: corgi tên Bơ; Sở thích: Python, AI agent và benchmark memory'
+
+src/test_agents.py:172: AssertionError
+=========================== short test summary info ============================
+FAILED src/test_agents.py::test_profile_recall_matches_dataset_fields - Asser...
+========================= 1 failed, 17 passed in 0.69s =========================
